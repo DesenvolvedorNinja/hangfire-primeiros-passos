@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Hangfire;
 
 namespace WebDemoHangfire
 {
@@ -28,6 +25,7 @@ namespace WebDemoHangfire
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddHangfire(x => x.UseSqlServerStorage("Data Source=localhost;Initial Catalog=hangfire;User id=hangfire;Password=hangfire;"));
             services.AddMvc();
         }
 
@@ -36,6 +34,9 @@ namespace WebDemoHangfire
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseHangfireServer();
+            app.UseHangfireDashboard();
 
             app.UseMvc();
         }
